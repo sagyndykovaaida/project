@@ -8,9 +8,19 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'), 
+    },
+    compress: true, 
+    port: 3000, 
+    open: {
+      target: 'http://localhost:3000/', 
+    },
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './index.html',
+      template: './src/index.html',
     }),
   ],
 };
