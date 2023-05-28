@@ -18,6 +18,14 @@ module.exports = {
       target: 'http://localhost:3000/', 
     },
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
