@@ -1,62 +1,57 @@
-// Import necessary CSS files if needed
-// import './styles.css';
+import './styles.css';
+const itemsPerPage = 10; 
+let currentPage = 1; 
+let tableData = []; 
+fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
+  .then(response => response.json())
+  .then(data => {
+    tableData = processData(data.results);
+    renderTable();
+    renderPagination();
+  })
+  .catch(error => {
+    console.log(error);
+  });
 
-// Sample data array
-const data = [
- "Item 1",
- "Item 2",
- "Item 3",
- // ... more items
-];
-
-// Configuration
-const itemsPerPage = 5; // Number of items to display per page
-let currentPage = 1; // Current page
-
-// Function to render the current page's data
-function renderPage() {
- const startIndex = (currentPage - 1) * itemsPerPage;
- const endIndex = startIndex + itemsPerPage;
- const pageData = data.slice(startIndex, endIndex);
-
- const dataContainer = document.getElementById("dataContainer");
- dataContainer.innerHTML = ""; // Clear previous content
-
- // Render the data for the current page
- pageData.forEach(item => {
-   const itemElement = document.createElement("div");
-   itemElement.textContent = item;
-   dataContainer.appendChild(itemElement);
- });
-
- // Update the current page indicator
- const currentPageElement = document.getElementById("currentPage");
- currentPageElement.textContent = currentPage;
+function processData(results) {
+  
+  return results.map(item => {
+    const row = document.createElement('tr');
+    const column1 = document.createElement('td');
+    column1.textContent = item.name;
+    row.appendChild(column1);
+    return row;
+  });
 }
 
-// Function to navigate to the previous page
-function goToPreviousPage() {
- if (currentPage > 1) {
-   currentPage--;
-   renderPage();
- }
+function renderTable() {
+  const table = document.getElementById('data-table');
+  table.innerHTML = ''; 
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  for (let i = startIndex; i < endIndex; i++) {
+    if (tableData[i]) {
+      table.appendChild(tableData[i]);
+    }
+  }
 }
 
-// Function to navigate to the next page
-function goToNextPage() {
- const totalPages = Math.ceil(data.length / itemsPerPage);
- if (currentPage < totalPages) {
-   currentPage++;
-   renderPage();
- }
+function renderPagination() {
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; // Clear the existing pagination
+
+  const totalPages = Math.ceil(tableData.length / itemsPerPage);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const button = document.createElement('button');
+    button.textContent = i;
+    button.addEventListener('click', () => {
+      currentPage = i;
+      renderTable();
+    });
+
+    paginationContainer.appendChild(button);
+  }
 }
-
-// Event listeners for the pagination buttons
-const prevPageButton = document.getElementById("prevPageButton");
-prevPageButton.addEventListener("click", goToPreviousPage);
-
-const nextPageButton = document.getElementById("nextPageButton");
-nextPageButton.addEventListener("click", goToNextPage);
-
-// Initial render
-renderPage();
